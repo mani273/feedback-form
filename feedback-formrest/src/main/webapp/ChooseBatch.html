@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Form</title>
+   
+</head>
+
+<body>
+    <h2>Feedback Form</h2>
+
+    <form id="feedbackForm" action="/feedback" method="post">
+        <div class="container">
+            <div class="card">
+                <h3>Personal Details</h3>
+                
+                <label>Choose a Batch:</label>
+                <select name="batch" id="batch">
+                    <option value="java">Java</option>
+                    <option value="csharp">C#</option>
+                </select>
+                
+                <hr>
+                <div id="questionContainer">
+                </div>
+
+                <input type="submit" value="Submit"> 
+            </div>
+        </div>
+    </form>
+	<!-- <br><br><a href=index.html>Home Page</a> -->
+
+    <script>
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            
+            var batchValue = document.getElementById('batch').value;
+            
+            if (batchValue === 'java') {
+                window.location.href = 'java.html';
+            } else if (batchValue === 'csharp') {
+                window.location.href = 'csharp.html'; 
+            }
+        });
+    </script>
+</body>
+</html>

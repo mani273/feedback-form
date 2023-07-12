@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Save Data Example</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+
+		$(document).ready(function() {
+			$('#submit1').click(function() {
+				var text = $('#text1').val();
+				var isValidText = /^[a-zA-Z0-9\s]+$/.test(text);
+
+				if (!isValidText) {
+					alert('Please enter valid text without special characters.');
+					return;
+				}
+
+				var batch = $('#batch').val();
+				console.log('Text:', text);
+				console.log('Batch:', batch);
+
+				// Perform further processing or submit the data
+			});
+		});
+		
+		
+		$(document).on('input', '#text1', function() {
+			var text = $(this).val();
+			
+			if (text.length > 50) {
+				$(this).val(text.substring(0, 50));
+				alert('Text should not exceed 50 characters.');
+			}
+		});
+			
+		
+	</script>
+<script src="script/script.js"></script>
+</head>
+<body>
+
+	<h2>Enter a Details to Add a Batch</h2>
+
+
+	<textarea id="text1" rows="4" cols="50"></textarea>
+	<br>
+
+	<label for="batch">Choose a Batch:</label>
+	<select name="batch" id="batch">
+		<option value="java">java</option>
+		<option value="csharp">C#</option>
+	</select>
+
+
+	<input type="button" id="submit1" value="Submit">
+	
+	
+	
+	
+</body>
+</html>
+	
+	
+	

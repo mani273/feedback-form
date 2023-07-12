@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Results:</title>
+<style>
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+table, th, td {
+	border: 1px solid black;
+	padding: 8px;
+}
+</style>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+	<h1>Results:</h1>
+	<div id="results">
+		<table id="dataTable">
+			<thead>
+				<tr>
+					<th>Email</th>
+					<th>Batch</th>
+					<th>Answer </th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</body>
+
+<script>
+$(document).ready(function() {
+	
+function getQueryParamValue(param) {
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+	  
+	  
+  var selectedBatch = getQueryParamValue('batch');
+	  
+	  
+  var batch = selectedBatch;
+  var burl = `/data/api/results/${batch}`;
+  $.ajax({
+    type: 'GET',
+    url: burl,
+    dataType: 'json',
+    success: function(data) {
+      var result = data; 
+      var tbody = $('#dataTable tbody');
+      tbody.empty(); 
+      data.forEach(result=>{
+    	  
+    	  console.log(result);
+    	  
+    	  var row = '<tr>' +
+          '<td>' + result.user.email + '</td>' +
+          '<td>' + result.batch + '</td>' +
+          '<td>' + result.ans + '</td>' +
+        '</tr>';
+
+tbody.append(row);
+      });
+      
+    }
+  });
+});
+
+
+</script>
+</html>

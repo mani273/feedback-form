@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Login</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("form[name='loginForm']").submit(function(event) {
+        event.preventDefault();
+        var adminName = $("#adminName").val();
+        var password = $("#password").val();
+        if (adminName === "admin" && password === "admin") {
+          $.ajax({
+            url: "OverAllResult.html", 
+            success: function() {
+              window.location.href = "OverAllResult.html";
+            },
+            error: function() {
+              alert("Error occurred while loading the next page.");
+            }
+          });
+        } else {
+          alert("Invalid admin name or password.");
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h2>Admin Login</h2>
+  <form name="loginForm" method="post">
+    <label for="adminName">Admin Name:</label>
+    <input type="text" id="adminName" name="adminName" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <input type="submit" value="Login">
+  </form>
+</body>
+</html>

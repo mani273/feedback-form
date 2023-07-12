@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Save Data Example</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="script/script.js"></script>
+</head>
+<body>
+
+	<!-- <a href=AddBatch.html>Add Batch</a> -->
+
+	<h4>Check the FeedBack Details</h4>
+	<label for="resultBatch">Check results:</label>
+	<select name="batch" id="resultBatch">
+		<option value="java">java</option>
+		<option value="cSharp">C#</option>
+		<option value="allData">All results</option>
+	</select>
+
+	<input type="button" id="viewResults" value="Submit"
+		onClick="redirectToResults()">
+
+ <br><br><a href=AddBatch.html>Add Batch</a>
+
+	<script>
+    function redirectToResults() {
+    	  var selectedValue = $('#resultBatch').val();
+    	  var url = 'Results.html?batch=' + selectedValue; 
+    	  window.location.href = url;
+    	}
+    </script>
+
+</body>
+</html>

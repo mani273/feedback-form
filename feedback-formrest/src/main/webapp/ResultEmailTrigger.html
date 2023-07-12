@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+<h1>Result Page</h1>
+<h3 id="uname"></h3>
+<h3 id="uphone"></h3>
+<h3 id="uemail"></h3>
+
+<div id="results">
+    <table id="dataTable">
+        <thead>
+        <tr>
+         
+            <th>Question</th>
+            <th>Answer</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<button id="sendEmailBtn">Send Email</button>
+
+<a href="FrontPage.html">Back</a>
+
+<script>
+
+
+//cookies
+var encryptedUserId = getCookieValue('id');
+var decryptedUserId;
+
+//Function to retrieve the value of a cookie
+function getCookieValue(cookieName) {
+var name = cookieName + "=";
+var decodedCookie = decodeURIComponent(document.cookie);
+var cookieArray = decodedCookie.split(';');
+for (var i = 0; i < cookieArray.length; i++) {
+  var cookie = cookieArray[i].trim();
+  if (cookie.indexOf(name) === 0) {
+    return cookie.substring(name.length, cookie.length);
+  }
+}
+return "";
+}
+
+
+console.log(encryptedUserId)
+//Function to make the request for decryption
+function makeDecryptionRequest(encryptedValue) {
+$.ajax({
+  type: 'POST',
+  url: '/decrypt',
+  data: { encryptedValue: encryptedValue },
+  dataType: 'text',
+  success: function(decryptedValue) {
+    decryptedUserId = decryptedValue;
+    console.log("Decrypted user ID: " + decryptedUserId);
+    // Proceed with retrieving user details using the decrypted user ID
+    retrieveUserDetails(decryptedUserId);
+  },
+  error: function() {
+    console.log('Error decrypting user ID');
+  }
+});
+}
+
+	var dataOfUser ;
+	//Function to retrieve user details
+	function retrieveUserDetails(userId) {
+	$.ajax({
+	  type: 'GET',
+	  url: '/data/api/user/' + userId,
+	  dataType: 'json',
+	  success: function(user) {
+	  	dataOfUser = user;
+	  },
+	  error: function() {
+	    console.log('Error retrieving user details');
+	  }
+	});
+	}
+	//Call the decryption
+	makeDecryptionRequest(encryptedUserId);
+
+
+
+$(document).ready(function() {
+	  var batch = 'java';
+	  var burl = `/data/api/questions/${batch}`;
+	  $.ajax({
+	    type: 'GET',
+	    url: burl,
+	    dataType: 'json',
+	    success: function(data) {
+
+	    }
+	  })
+	  });
+
+        // Get cookie values
+
+        function getQueryParamValue(param) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+		
+        var selectedBatch = getQueryParamValue('data');
+        var batch = selectedBatch ? selectedBatch : 'allData';
+		//get questions
+		var questionData;
+	  var burl = `/data/api/questions/${batch}`;
+	  $.ajax({
+	    type: 'GET',
+	    url: burl,
+	    dataType: 'json',
+	    success: function(data) {
+	console.log(data)
+	questionData = data;
+
+	      
+	    }
+	  })
+        
+        var burl = `/data/api/results/${batch}`;
+        $.ajax({
+            type: 'GET',
+            url: burl,
+            dataType: 'json',
+            success: function(data) {
+                var tbody = $('#dataTable tbody');
+                tbody.empty();
+                data.forEach(function(result) {
+                var text1;
+               	if(result.user.email == dataOfUser.email ){
+               		
+               	
+                	for (const obj of questionData) {
+                		
+                		  if (obj.id == result.question) {
+                		    text1 = obj.text1;
+                		    break;
+                		  }
+                		}
+                    var row = '<tr>' +
+                        
+                        '<td>' + text1 + '</td>' +
+                        '<td>' + result.ans + '</td>' +
+                        '</tr>';
+					
+                    tbody.append(row);
+               	}
+               	});
+            },
+            error: function(xhr, status, error) {
+                console.log('Error: ' + error);
+            }
+        });
+        
+
+        
+
+        
+        	  let cookie = {};
+        	  document.cookie.split(';').forEach(function(el) {
+        	    let [k,v] = el.split('=');
+        	    cookie[k.trim()] = v;
+        	  });
+        
+        // Send email when button is clicked
+        $('#sendEmailBtn').click(function() {
+        	var userId = cookie.id;
+       			var email;
+        	  console.log("Hello"); // Assuming the user ID is stored in the cookie
+        	  $.ajax({
+        	    type: 'GET',
+        	    url: '/data/api/user/' + userId,
+        	    dataType: 'json',
+        	    success: function(data) {
+        	  	  email = data.email;
+        	  	  console.log(data.email);
+        	  	var subject = 'Results';
+                var body = $('#results').html();
+             
+                $.ajax({
+                    type: 'POST',
+                    url: '/sendEmail',
+                    data: {
+                    	
+                        recipientEmail: email,
+                        subject: subject,
+                        body: body
+                        
+                        
+                    },
+                    
+                    success: function(response) {
+                        console.log('Email sent successfully!');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error sending email: ' + error);
+                    }
+                    
+                });
+        	    },
+        	    error: function() {
+        	      console.log('Error retrieving user details');
+        	    }
+        	  });
+        	
+            
+        });
+       
+        
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<!--  <script src="script/script.js"></script> -->
+
+</head>
+<body>
+
+<h2>Welcome to JAVA Feedback form</h2>
+
+	<h3>Add the User Details</h3>
+
+
+	<div id="dropdownContainer"></div>
+
+	ENTER NAME :
+	<input type="text" name="userName" id="name" required="required">
+	<br>
+	<br> ENTER PHONE NUMBER:
+	<input type="number" name="userPhone" id="phoneNumber"
+		required="required">
+	<br>
+	<br> ENTER EMAIL :
+	<input type="text" name="userEmail" id="email" required="required">
+	<br>
+	<br>
+	<h1>Give your Feedback</h1>
+
+
+
+	<br>
+
+	<div id="questions">
+	
+	</div>
+
+
+
+
+	<button id="submit3">Register</button><br><br>
+	
+	<a href=ChooseBatch.html>Back</a>
+
+	<script>
+	$(document).ready(function() {
+		  var batch = 'java';
+		  var burl = `/data/api/questions/${batch}`;
+		  $.ajax({
+		    type: 'GET',
+		    url: burl,
+		    datatype: 'json',
+		    success: function(data) {
+		      var questionsDiv = $('#questions');
+
+		      for (var i = 0; i < data.length; i++) {
+		        var question = data[i];
+		        var questionId = question.id;
+		        var questionText = question.text1;
+		        var questionHeader = $('<h4>').text(questionText).attr('id', 'question_' + questionId);;
+		        questionsDiv.append(questionHeader);
+		        for (var j = 1; j <= 5; j++) {
+		          var optionId = 'question_' + questionId + '_option_' + j;
+		          var radioBtn = $('<input>').attr({
+		            type: 'radio',
+		            name: 'question_' + questionId,
+		            id: optionId,
+		            value: j
+		          });
+		          var label = $('<label>').attr('for', optionId).text(j);
+		          questionsDiv.append(radioBtn).append(label);
+		        }
+		        questionsDiv.append('<br><br>');
+		      }
+		    }
+		  });
+
+		  
+		  //name validate
+		  $('#submit3').click(function() {
+			    var name = $('#name').val();
+			    var isValidName = /^[a-zA-Z ]+$/.test(name);
+
+			    if (!isValidName) {
+			      alert('Please enter a valid name without special characters.');
+			      return;
+			    }
+			    
+			 
+			    
+			    //phone validation
+			    
+		    var phoneNumber = $('#phoneNumber').val();
+		    var isValidPhone = /^\d{10}$/.test(phoneNumber);
+		
+		    if (!isValidPhone) {
+		      if (phoneNumber.length === 0) {
+		        alert('Please enter a phone number.');
+		      } else if (phoneNumber.length < 10) {
+		        alert('Please enter a 10-digit phone number.');
+		      } else {
+		        alert('Please enter a valid phone number with digits only.');
+		      }
+		      return;
+		    }
+			       
+			    
+			    
+			//email validation
+			var email = $('#email').val();
+		    var isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+		
+		    if (!isValidEmail) {
+		      alert('Please enter a valid email address.');
+		      return;
+		    }
+			    
+			    
+		  
+		
+
+		     questionIds = [];
+		     answerValues = [];
+
+		    // Iterate over the questions
+		    $('input[type="radio"]:checked').each(function() {
+		      var questionId = $(this).attr('name').replace('question_', '');
+		      var answerValue = $(this).val();
+
+		      questionIds.push(questionId);
+		      answerValues.push(answerValue);
+		    });
+			console.log(questionIds);
+			console.log(answerValues);
+		    var javaresponse = {
+		      name: $("#name").val(),
+		      phoneNumber: $("#phoneNumber").val(),
+		      email: $("#email").val(),
+		      question: questionIds,
+		      answer: answerValues,
+		      batch: "java"
+		    };
+		    console.log(javaresponse);
+	
+		    $.ajax({
+		      type: 'post',
+		      url: `/data/api/submit`,
+		      contenttype: 'application/json',
+		      data: {
+		        uu: JSON.stringify(javaresponse)
+		      },
+		      datatype: 'text',
+		      success: function(response) {
+		        location.href = response;
+		      }
+		    });
+		  });
+		});
+
+	</script>
+</body>
+</html>
